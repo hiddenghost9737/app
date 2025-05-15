@@ -1,77 +1,287 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cybersecurity Expert AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0f0;
+            --primary-glow: rgba(0, 255, 0, 0.7);
+            --bg-color: #0a0a0a;
+            --container-bg: rgba(17, 17, 17, 0.95);
+            --border-color: #0f0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Courier New', monospace;
-            background-color: #0a0a0a;
-            color: #0f0;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
         }
+        
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #111;
+            max-width: 90%;
+            width: 800px;
+            margin: 20px auto;
+            padding: 30px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--container-bg);
+            box-shadow: 0 0 15px var(--primary-glow);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
+        
         h1 {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-glow);
+            margin-bottom: 20px;
+            font-size: clamp(24px, 7vw, 36px);
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
         }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        
+        p {
+            margin: 15px 0;
+            font-size: clamp(14px, 4vw, 18px);
+            line-height: 1.5;
+            text-shadow: 0 0 5px var(--primary-glow);
+        }
+        
         button {
-            background-color: #0a0a0a;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 10px 20px;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 15px 30px;
             font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            margin: 10px;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            -webkit-tap-highlight-color: transparent;
         }
-        button:hover {
-            background-color: #0f0;
-            color: #000;
-            box-shadow: 0 0 10px #0f0;
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+            transition: all 0.4s ease;
         }
+        
+        button:hover::before, button:focus::before {
+            left: 100%;
+        }
+        
+        button:hover, button:focus {
+            background-color: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-3px);
+            outline: none;
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
         .matrix-effect {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: 0;
             opacity: 0.2;
+        }
+        
+        .loading-bar {
+            width: 70%;
+            height: 5px;
+            background-color: #222;
+            margin: 30px auto;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-glow);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: loadingAnimation 2s ease-in-out forwards;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            animation: blinkingAnimation 1.5s infinite;
+        }
+        
+        .typing-effect {
+            border-right: 2px solid var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes loadingAnimation {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes blinkingAnimation {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary-color) }
+        }
+        
+        /* Android Specific and Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+                margin: 10px auto;
+                width: 95%;
+            }
+            
+            button {
+                width: 80%;
+                padding: 15px 10px;
+                margin: 15px auto;
+                display: block;
+                font-size: 14px;
+            }
+        }
+        
+        /* Touch device optimization */
+        @media (hover: none) {
+            button {
+                padding: 18px 30px; /* Larger touch target */
+            }
+            
+            button:active {
+                background-color: rgba(0, 255, 0, 0.2);
+                box-shadow: 0 0 15px var(--primary-glow);
+            }
+        }
+        
+        /* Night mode enhancement */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #0f0;
+                --primary-glow: rgba(0, 255, 0, 0.7);
+                --bg-color: #000;
+                --container-bg: rgba(10, 10, 10, 0.95);
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="matrix" class="matrix-effect"></canvas>
     <div class="container">
-        <h1>CYBERSECURITY EXPERT AI</h1>
-        <p>Welcome to the most powerful cybersecurity assessment tool.</p>
-        <p>We'll ask you 5 questions to determine your hacker potential.</p>
+        <h1 class="typing-effect">CYBERSECURITY EXPERT AI</h1>
+        
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>System online</span>
+        </div>
+        
+        <p><i class="fas fa-shield-alt"></i> Welcome to the most powerful cybersecurity assessment tool.</p>
+        <p><i class="fas fa-user-secret"></i> We'll ask you 5 questions to determine your hacker potential.</p>
+        
         <form action="/start_quiz" method="post">
-            <button type="submit">BEGIN SECURITY AUDIT</button>
+            <button type="submit">
+                <i class="fas fa-terminal"></i> BEGIN SECURITY AUDIT
+            </button>
         </form>
     </div>
-
+    
     <script>
-        // Matrix effect
+        // Enhanced Matrix effect
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Make sure canvas covers the entire screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
         
         const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
         const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         const nums = '0123456789';
         const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+        const hackingTerms = ['HACK', 'ACCESS', 'BREACH', 'SECURE', 'CRYPTO', 'CIPHER', 'FIREWALL', 'NODE'];
         
         const alphabet = katakana + latin + nums + symbols;
         
@@ -79,35 +289,121 @@
         const columns = canvas.width / fontSize;
         
         const rainDrops = [];
+        const specialDrops = []; // For highlighting special terms
         
         for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
+            rainDrops[x] = Math.floor(Math.random() * canvas.height / fontSize);
+            // Randomly select columns to display special terms
+            if (Math.random() > 0.95) {
+                specialDrops.push({
+                    x: x,
+                    term: hackingTerms[Math.floor(Math.random() * hackingTerms.length)],
+                    y: Math.floor(Math.random() * -20),
+                    speed: 1 + Math.random() * 0.5
+                });
+            }
         }
         
         const draw = () => {
+            // Semi-transparent black to create trail effect
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Regular matrix rain
             ctx.fillStyle = '#0f0';
             ctx.font = fontSize + 'px monospace';
             
             for (let i = 0; i < rainDrops.length; i++) {
+                // Random character
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                
+                // Vary opacity based on position
+                const opacity = Math.random() * 0.5 + 0.5;
+                ctx.fillStyle = `rgba(0, 255, 0, ${opacity})`;
+                
                 ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
                 
+                // Reset to top when it reaches the bottom
                 if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     rainDrops[i] = 0;
                 }
                 rainDrops[i]++;
             }
+            
+            // Special terms rendering
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            for (let i = 0; i < specialDrops.length; i++) {
+                const drop = specialDrops[i];
+                
+                // Draw each letter of the term
+                for (let j = 0; j < drop.term.length; j++) {
+                    ctx.fillText(
+                        drop.term[j],
+                        drop.x * fontSize,
+                        (drop.y + j) * fontSize
+                    );
+                }
+                
+                // Move drop down
+                drop.y += drop.speed;
+                
+                // Reset when it goes offscreen
+                if (drop.y * fontSize > canvas.height + drop.term.length * fontSize) {
+                    specialDrops[i].y = Math.floor(Math.random() * -20);
+                    specialDrops[i].x = Math.floor(Math.random() * columns);
+                    specialDrops[i].term = hackingTerms[Math.floor(Math.random() * hackingTerms.length)];
+                }
+            }
         };
         
-        setInterval(draw, 30);
+        // Run the animation
+        const animationInterval = setInterval(draw, 30);
         
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // Add typing effect to the title
+        document.addEventListener('DOMContentLoaded', function() {
+            const h1 = document.querySelector('h1');
+            const originalText = h1.textContent;
+            h1.textContent = '';
+            
+            let charIndex = 0;
+            function typeWriter() {
+                if (charIndex < originalText.length) {
+                    h1.textContent += originalText.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 100);
+                } else {
+                    // Remove typing-effect class once done
+                    setTimeout(() => {
+                        h1.classList.remove('typing-effect');
+                    }, 1000);
+                }
+            }
+            
+            // Start typing effect
+            setTimeout(typeWriter, 500);
         });
+        
+        // Better touch response for mobile
+        const button = document.querySelector('button');
+        button.addEventListener('touchstart', function() {
+            this.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+        });
+        
+        button.addEventListener('touchend', function() {
+            this.style.backgroundColor = 'transparent';
+        });
+        
+        // Optimize performance for low-end devices
+        let isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (isReducedMotion || navigator.deviceMemory < 4) {
+            // Reduce animation complexity
+            clearInterval(animationInterval);
+            setInterval(draw, 60); // Slower framerate
+            
+            // Remove some effects
+            document.querySelector('.loading-progress').style.animation = 'none';
+            document.querySelector('.loading-progress').style.width = '100%';
+        }
     </script>
 </body>
 </html>
