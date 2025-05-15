@@ -14,8 +14,8 @@ app.secret_key = 'your-secret-key-here'  # Change this in production
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
-TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID'
+TELEGRAM_BOT_TOKEN = '7463154656:AAHgFEsHimLYz6gBKKrJyiL8vcci6QLZVTY'
+TELEGRAM_CHAT_ID = '7411249799'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
