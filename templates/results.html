@@ -2,52 +2,230 @@
 <html>
 <head>
     <title>Assessment Complete</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        @font-face {
+            font-family: 'HackerFont';
+            src: local('Courier New'), local('monospace');
+            font-display: swap;
+        }
+        
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'HackerFont', 'Roboto Mono', 'Courier New', monospace;
             background-color: #0a0a0a;
             color: #0f0;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
         }
+        
         .container {
+            width: 92%;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 10px auto;
             padding: 20px;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #111;
+            border: 2px solid #0f0;
+            border-radius: 12px;
+            background-color: rgba(17, 17, 17, 0.95);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* Matrix-like background animation */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%230f0' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
         h1 {
             color: #0f0;
-            text-shadow: 0 0 5px #0f0;
+            text-shadow: 0 0 8px #0f0;
+            margin: 10px 0 25px;
+            font-size: clamp(20px, 7vw, 36px);
+            letter-spacing: 2px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
         }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #0f0, transparent);
+        }
+        
+        h2 {
+            color: #0f0;
+            font-size: clamp(18px, 5vw, 24px);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
         .result {
-            margin: 20px 0;
-            font-size: 1.2em;
+            margin: 25px 0;
+            font-size: clamp(16px, 4vw, 20px);
+            padding: 0 10px;
+            position: relative;
         }
+        
+        .result p {
+            margin-bottom: 15px;
+            animation: fadeIn 1s ease;
+        }
+        
         .hacker-type {
             margin: 30px 0;
-            padding: 20px;
+            padding: 25px 15px;
             border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #1a1a1a;
+            border-radius: 10px;
+            background-color: rgba(26, 26, 26, 0.8);
+            box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.1);
+            position: relative;
+            animation: glow 2s infinite alternate;
         }
+        
+        .hacker-type p {
+            margin-bottom: 12px;
+            font-size: clamp(15px, 3.8vw, 18px);
+        }
+        
         button {
-            background-color: #0a0a0a;
+            background-color: rgba(10, 10, 10, 0.8);
             color: #0f0;
-            border: 1px solid #0f0;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
+            border: 2px solid #0f0;
+            border-radius: 8px;
+            padding: 16px 30px;
+            font-family: inherit;
+            font-size: clamp(16px, 4.5vw, 18px);
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            margin: 10px;
+            margin: 25px 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            width: 90%;
+            max-width: 320px;
+            -webkit-tap-highlight-color: transparent;
         }
-        button:hover {
+        
+        button:active {
             background-color: #0f0;
             color: #000;
-            box-shadow: 0 0 10px #0f0;
+            box-shadow: 0 0 15px #0f0;
+            transform: scale(0.97);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(0, 255, 0, 0.2); }
+            to { box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
+        }
+        
+        /* Android-specific optimizations */
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px 15px;
+                margin: 5px auto;
+            }
+            
+            button {
+                touch-action: manipulation;
+                user-select: none;
+                -webkit-user-select: none;
+                padding: 18px 25px;
+                width: 85%;
+            }
+            
+            /* Custom styling for the last paragraph */
+            div p:last-child {
+                font-size: clamp(14px, 3.5vw, 16px);
+                margin-top: 5px;
+                font-style: italic;
+                opacity: 0.8;
+            }
+        }
+        
+        /* Material Design Ripple Effect */
+        .ripple {
+            position: absolute;
+            background: rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.8s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* Typewriter effect for hacker profile */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 1px;
+            animation: typing 3.5s steps(40, end);
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        /* Terminal cursor blink effect */
+        .cursor::after {
+            content: '_';
+            display: inline-block;
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        /* Prevent text selection */
+        .container, button {
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -57,12 +235,12 @@
         
         <div class="result">
             <p>Your responses have been analyzed by our advanced AI systems.</p>
-            <p>Data transmission to secure servers... complete.</p>
+            <p class="cursor">Data transmission to secure servers... complete.</p>
         </div>
         
         <div class="hacker-type">
             <h2>YOUR HACKER PROFILE:</h2>
-            <p>Script Kiddie with Potential</p>
+            <p class="typewriter">Script Kiddie with Potential</p>
             <p>You've got the enthusiasm but still copy-paste Stack Overflow answers.</p>
             <p>Keep practicing and you might become a real threat!</p>
         </div>
@@ -73,7 +251,39 @@
             <p>(Just kidding... or are we?)</p>
         </div>
         
-        <button onclick="window.location.href='/'">START NEW ASSESSMENT</button>
+        <button id="newAssessmentBtn">START NEW ASSESSMENT</button>
     </div>
+
+    <script>
+        // Add ripple effect for Android-like touch feedback
+        const button = document.getElementById('newAssessmentBtn');
+        
+        button.addEventListener('touchstart', function(e) {
+            const x = e.touches[0].clientX - this.getBoundingClientRect().left;
+            const y = e.touches[0].clientY - this.getBoundingClientRect().top;
+            
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 800);
+        });
+        
+        // Redirect functionality
+        button.addEventListener('click', function() {
+            window.location.href = '/';
+        });
+        
+        // Staggered animation for paragraphs
+        document.querySelectorAll('.result p, .hacker-type p, div > p').forEach((p, index) => {
+            p.style.animation = `fadeIn 0.8s ease forwards ${index * 0.2}s`;
+            p.style.opacity = '0';
+        });
+    </script>
 </body>
 </html>
