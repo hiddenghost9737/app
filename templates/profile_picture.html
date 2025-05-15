@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Profile Picture</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            background-color: #111;
+        }
+        h1 {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
+        button {
+            background-color: #0a0a0a;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0f0;
+            color: #000;
+            box-shadow: 0 0 10px #0f0;
+        }
+        .preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 20px auto;
+            border: 1px solid #0f0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SECURITY PROFILE SETUP</h1>
+        <p>To complete your security assessment, we need to verify your identity.</p>
+        
+        <div id="upload-section">
+            <h2>Upload Profile Picture</h2>
+            <form method="post" action="/upload_picture/{{ session_id }}" enctype="multipart/form-data">
+                <input type="file" name="file" id="file" accept="image/*" style="display: none;">
+                <button type="button" onclick="document.getElementById('file').click()">SELECT FILE</button>
+                <img id="preview" class="preview hidden">
+                <div>
+                    <button type="submit">UPLOAD</button>
+                </div>
+            </form>
+            <p>OR</p>
+            <button onclick="showCamera()">USE CAMERA</button>
+        </div>
+        
+        <div id="camera-section" class="hidden">
+            <h2>Take a Selfie</h2>
+            <video id="video" width="320" height="240" autoplay></video>
+            <canvas id="canvas" width="320" height="240" class="hidden"></canvas>
+            <div>
+                <button onclick="takeSnapshot()">CAPTURE</button>
+                <button onclick="showUpload()">BACK</button>
+            </div>
+            <form id="camera-form" method="post" action="/upload_camera/{{ session_id }}" class="hidden">
+                <input type="hidden" name="image_data" id="image-data">
+                <button type="submit">SUBMIT SELFIE</button>
+            </form>
+            <img id="photo" class="preview hidden">
+        </div>
+    </div>
+
+    <script>
+        function showCamera() {
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('camera-section').classList.remove('hidden');
+            initCamera();
+        }
+        
+        function showUpload() {
+            document.getElementById('camera-section').classList.add('hidden');
+            document.getElementById('upload-section').classList.remove('hidden');
+            stopCamera();
+        }
+        
+        function initCamera() {
+            const video = document.getElementById('video');
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        video.srcObject = stream;
+                    })
+                    .catch(error => {
+                        alert("Could not access the camera: " + error);
+                        showUpload();
+                    });
+            } else {
+                alert("Camera access not supported by your browser");
+                showUpload();
+            }
+        }
+        
+        function stopCamera() {
+            const video = document.getElementById('video');
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+        
+        function takeSnapshot() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const photo = document.getElementById('photo');
+            const imageData = document.getElementById('image-data');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const image = canvas.toDataURL('image/jpeg');
+            photo.src = image;
+            photo.classList.remove('hidden');
+            imageData.value = image;
+            
+            document.getElementById('camera-form').classList.remove('hidden');
+        }
+        
+        // File upload preview
+        document.getElementById('file').addEventListener('change', function(e) {
+            const preview = document.getElementById('preview');
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    preview.src = event.target.result;
+                    preview.classList.remove('hidden');
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
