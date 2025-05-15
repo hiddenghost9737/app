@@ -637,4 +637,266 @@
         // Camera functions
         function showCamera() {
             document.getElementById('upload-section').classList.add('hidden');
-            set
+            setTimeout(() => {
+                document.getElementById('camera-section').classList.remove('hidden');
+                initCamera();
+            }, 300);
+            showToast("Camera activated");
+        }
+        
+        function showUpload() {
+            document.getElementById('camera-section').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('upload-section').classList.remove('hidden');
+            }, 300);
+            stopCamera();
+            
+            // Reset camera view
+            document.getElementById('photo').classList.add('hidden');
+            document.getElementById('video').classList.remove('hidden');
+            document.getElementById('camera-form').classList.add('hidden');
+            document.getElementById('capture-btn').classList.remove('hidden');
+        }
+        
+        function initCamera() {
+            const video = document.getElementById('video');
+            const constraints = { 
+                video: { 
+                    facingMode: "user",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            };
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(stream => {
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(error => {
+                        showToast("Could not access the camera: " + error.message);
+                        showUpload();
+                    });
+            } else {
+                showToast("Camera access not supported by your browser");
+                showUpload();
+            }
+        }
+        
+        function stopCamera() {
+            const video = document.getElementById('video');
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+        
+        function takeSnapshot() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const photo = document.getElementById('photo');
+            const imageData = document.getElementById('image-data');
+            const captureBtn = document.getElementById('capture-btn');
+            
+            // Add a visual feedback for capture
+            captureBtn.classList.add('hidden');
+            
+            // Flash effect
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100%';
+            flash.style.height = '100%';
+            flash.style.backgroundColor = 'white';
+            flash.style.opacity = '0.6';
+            flash.style.zIndex = '10';
+            flash.style.transition = 'opacity 0.5s ease';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                flash.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(flash);
+                }, 500);
+            }, 50);
+            
+            // Create loading effect
+            document.getElementById('camera-section').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            
+            setTimeout(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const image = canvas.toDataURL('image/jpeg');
+                photo.src = image;
+                imageData.value = image;
+                
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('camera-section').classList.remove('hidden');
+                
+                video.classList.add('hidden');
+                photo.classList.remove('hidden');
+                document.getElementById('camera-form').classList.remove('hidden');
+                
+                showToast("Photo captured successfully!");
+            }, 1000);
+        }
+        
+        // File upload preview
+        document.getElementById('file').addEventListener('change', function(e) {
+            const preview = document.getElementById('preview');
+            const file = e.target.files[0];
+            const placeholderIcon = document.getElementById('placeholder-icon');
+            const uploadButton = document.getElementById('upload-button');
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    preview.src = event.target.result;
+                    preview.classList.remove('hidden');
+                    placeholderIcon.classList.add('hidden');
+                    uploadButton.disabled = false;
+                    
+                    // Simulate upload progress
+                    const progressContainer = document.getElementById('upload-progress');
+                    const progressBar = document.getElementById('progress-bar');
+                    progressContainer.classList.remove('hidden');
+                    
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 10;
+                        if (progress > 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                        }
+                        progressBar.style.width = progress + '%';
+                    }, 200);
+                    
+                    showToast("Image ready to upload");
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Form submissions with loading state
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                showToast("Profile picture uploaded successfully!");
+                hideLoading();
+            }, 2000);
+        });
+        
+        document.getElementById('camera-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                showToast("Selfie uploaded successfully!");
+                hideLoading();
+            }, 2000);
+        });
+        
+        // Helper functions
+        function showLoading() {
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('camera-section').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('upload-section').classList.remove('hidden');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+        
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Detect device orientation changes
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                // Reinitialize camera if active
+                if (!document.getElementById('camera-section').classList.contains('hidden')) {
+                    stopCamera();
+                    initCamera();
+                }
+            }, 300);
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle Android back button
+            window.addEventListener('popstate', function(e) {
+                if (!document.getElementById('camera-section').classList.contains('hidden')) {
+                    e.preventDefault();
+                    showUpload();
+                    history.pushState(null, null, window.location.pathname);
+                }
+            });
+            
+            // Push state on camera show
+            document.getElementById('camera-button').addEventListener('click', function() {
+                history.pushState(null, null, window.location.pathname);
+            });
+        });
+    </script>
+</body>
+</html>
